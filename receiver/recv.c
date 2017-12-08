@@ -42,7 +42,7 @@ static volatile struct pseudowire {
   uint8_t buf[MAX_BYTE];
 } me;
 
-ISR (TIMER2_COMPA_vect)
+ISR (TIMER0_COMPA_vect)
 {
   static struct pseudowire_recv {
     uint8_t bit;
@@ -56,6 +56,7 @@ ISR (TIMER2_COMPA_vect)
   uint8_t rx;
 
   pw.counter++;
+
   if (pw.counter > (3 * PULSE)) {
     me.status = IDLE;
     pw.counter = 0;
@@ -139,13 +140,13 @@ void display_print_int(uint8_t i) {
 int main(void)
 {
 
-  TCCR2A = _BV(WGM21); 
-  TCCR2B = _BV(CS20) | _BV(CS21); /* 1/32 */
+  TCCR0A = _BV(WGM01);
+  TCCR0B = _BV(CS00) | _BV(CS01); /* 1/64 */
 
-  TCNT2 = 0;
-  OCR2A = 40;
-  TIMSK2 = _BV(OCIE2A);
-  TIFR2 = 0; 
+  TCNT0 = 0;
+  OCR0A = 19;
+  TIMSK0 = _BV(OCIE0A);
+  TIFR0 = 0;
   sei();
 
   DDRB |= _BV(PB2);
